@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import me.jacklin213.farmprotect.ulits.UpdateChecker;
 
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -26,8 +28,10 @@ public class FarmProtect extends JavaPlugin implements Listener{
 		log.info(String.format("[%s] Disabled Version %s", getDescription()
 				.getName(), getDescription().getVersion()));
 	}
-
+	
 	public void onEnable() {
+		
+		createConfig();
 		
 		Boolean updateCheck = getConfig().getBoolean("updatecheck");
 		
@@ -48,13 +52,28 @@ public class FarmProtect extends JavaPlugin implements Listener{
 
 	}
 	
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]){
+		if (commandLabel.equalsIgnoreCase("farmprotect")){
+			if (sender.hasPermission("farmprotect.reload")){
+				if (args[0].equalsIgnoreCase("reload")){
+					this.reloadConfig();
+					return true;
+				}
+			} else {
+				sender.sendMessage("You do not have the permissions to use this command!");
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@EventHandler
 	public void noFarmlanddestroy(PlayerInteractEvent event){
 		if(event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL)
 			event.setCancelled(true);
 	}
 	
-	public void createconfig() {
+	public void createConfig() {
 		// Creates config.yml
 		File file = new File(getDataFolder() + File.separator + "config.yml");
 		// If config.yml doesnt exit
@@ -67,5 +86,6 @@ public class FarmProtect extends JavaPlugin implements Listener{
 		}
 
 	}
+
 
 }
