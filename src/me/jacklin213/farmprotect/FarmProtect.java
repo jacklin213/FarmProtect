@@ -3,7 +3,7 @@ package me.jacklin213.farmprotect;
 import java.io.File;
 import java.util.logging.Logger;
 
-import me.jacklin213.farmprotect.ulits.UpdateChecker;
+import me.jacklin213.farmprotect.utils.UpdateChecker;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +19,6 @@ public class FarmProtect extends JavaPlugin implements Listener{
 	
 	public static FarmProtect plugin;
 
-	PluginDescriptionFile pdfFile;
 	public Logger log = Logger.getLogger("Minecraft");
 	public UpdateChecker updateChecker;
 		
@@ -40,13 +38,10 @@ public class FarmProtect extends JavaPlugin implements Listener{
 		
 		this.updateChecker = new UpdateChecker(this, "http://dev.bukkit.org/server-mods/farmprotect/files.rss");
 		
-		if (updateCheck){
-			if (this.updateChecker.updateNeeded()) {
-				this.log.info(String.format("[%s] A new update is avalible, Version: %s", new Object[] { getDescription().getName(), this.updateChecker.getVersion() }));
-			    this.log.info(String.format("[%s] Get it now from: %s", new Object[] { getDescription().getName(), this.updateChecker.getLink() }));
-			}
+		if ((updateCheck) && (this.updateChecker.updateNeeded())) {
+			this.log.info(String.format("[%s] A new update is avalible, Version: %s", getDescription().getName(), this.updateChecker.getVersion()));
+			this.log.info(String.format("[%s] Get it now from: %s", getDescription().getName(), this.updateChecker.getLink()));
 		}
-	    
 		this.log.info(String.format("[%s] Enabled Version %s by jacklin213", getDescription()
 				.getName(), getDescription().getVersion()));
 

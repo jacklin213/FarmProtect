@@ -1,4 +1,4 @@
-package me.jacklin213.farmprotect.ulits;
+package me.jacklin213.farmprotect.utils;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
