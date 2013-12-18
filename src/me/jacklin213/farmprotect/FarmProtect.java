@@ -3,14 +3,19 @@ package me.jacklin213.farmprotect;
 import java.io.File;
 import java.util.logging.Logger;
 
-import me.jacklin213.farmprotect.utils.UpdateChecker;
+import me.jacklin213.farmprotect.utils.Updater;
+import me.jacklin213.farmprotect.utils.Updater.UpdateResult;
+import me.jacklin213.farmprotect.utils.Updater.UpdateType;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,31 +25,24 @@ public class FarmProtect extends JavaPlugin implements Listener{
 	public static FarmProtect plugin;
 
 	public Logger log = Logger.getLogger("Minecraft");
-	public UpdateChecker updateChecker;
+	public Updater updater;
 		
 	public void onDisable() {
-		log.info(String.format("[%s] Disabled Version %s", getDescription()
-				.getName(), getDescription().getVersion()));
+		log.info(String.format("Disabled Version %s", getDescription().getVersion()));
 	}
 	
 	public void onEnable() {
-		
-		createConfig();
-		
-		Boolean updateCheck = getConfig().getBoolean("updatecheck");
+		this.setLogger();
+		this.createConfig();
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(this, this);
 		
-		this.updateChecker = new UpdateChecker(this, "http://dev.bukkit.org/server-mods/farmprotect/files.rss");
+		Boolean updateCheck = Boolean.valueOf(getConfig().getBoolean("UpdateCheck"));
+		Boolean autoUpdate = Boolean.valueOf(getConfig().getBoolean("AutoUpdate"));
 		
-		if ((updateCheck) && (this.updateChecker.updateNeeded())) {
-			this.log.info(String.format("[%s] A new update is avalible, Version: %s", getDescription().getName(), this.updateChecker.getVersion()));
-			this.log.info(String.format("[%s] Get it now from: %s", getDescription().getName(), this.updateChecker.getLink()));
-		}
-		this.log.info(String.format("[%s] Enabled Version %s by jacklin213", getDescription()
-				.getName(), getDescription().getVersion()));
-
+		this.updateCheck(updateCheck, autoUpdate, 44691);
+		log.info(String.format("Version %s by jacklin213 has been Enabled!", getDescription().getVersion()));
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]){
@@ -52,10 +50,11 @@ public class FarmProtect extends JavaPlugin implements Listener{
 			if (sender.hasPermission("farmprotect.reload")){
 				if (args[0].equalsIgnoreCase("reload")){
 					this.reloadConfig();
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[&6FarmProtect&c]&a Has been reloaded"));
 					return true;
 				}
 			} else {
-				sender.sendMessage("You do not have the permissions to use this command!");
+				sender.sendMessage(ChatColor.RED + "You do not have the permissions to use this command!");
 				return true;
 			}
 		}
@@ -63,24 +62,58 @@ public class FarmProtect extends JavaPlugin implements Listener{
 	}
 	
 	@EventHandler
-	public void noFarmlanddestroy(PlayerInteractEvent event){
-		if(event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL)
+	public void soilChangePlayer(PlayerInteractEvent event) {
+		if ((event.getAction() == Action.PHYSICAL) && (event.getClickedBlock().getType() == Material.SOIL)){
 			event.setCancelled(true);
+		}
 	}
 	
-	public void createConfig() {
+	@EventHandler
+	public void soilChangeEntity(EntityInteractEvent event)	{
+		if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)){
+			event.setCancelled(true);
+		}
+	}
+	
+	private void createConfig() {
 		// Creates config.yml
 		File file = new File(getDataFolder() + File.separator + "config.yml");
 		// If config.yml doesnt exit
 		if (!file.exists()) {
 			// Tells console its creating a config.yml
-			this.getLogger().info(String.format("[%s] Cannot find config.yml, Generating now....", getDescription().getName()));
-			this.getLogger().info(String.format("[%s] Config generated !", getDescription().getName()));
-			this.getConfig().options().copyDefaults(true);
+			log.info("Cannot find config.yml, Generating now....");
 			this.saveDefaultConfig();
+			log.info("Config generated !");
 		}
 
 	}
-
-
+	
+	private void setLogger(){
+		log = getLogger();
+	}
+	
+	private void updateCheck(boolean updateCheck, boolean autoUpdate, int ID){
+		if(updateCheck && (autoUpdate == false)){
+			updater = new Updater(this, ID, this.getFile(), UpdateType.NO_DOWNLOAD, true);
+			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+			    log.info("New version available! " + updater.getLatestName());
+			}
+			if (updater.getResult() == UpdateResult.NO_UPDATE){
+				log.info(String.format("You are running the latest version of %s", getDescription().getName()));
+			}
+		}
+		if(autoUpdate && (updateCheck == false)){
+			updater = new Updater(this, ID, this.getFile(), UpdateType.NO_VERSION_CHECK, true);
+		} 
+		if(autoUpdate && updateCheck){
+			updater = new Updater(this, ID, this.getFile(), UpdateType.DEFAULT, true);
+			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+			    log.info("New version available! " + updater.getLatestName());
+			}
+			if (updater.getResult() == UpdateResult.NO_UPDATE){
+				log.info(String.format("You are running the latest version of %s", getDescription().getName()));
+			}
+		}
+	}
+	
 }
