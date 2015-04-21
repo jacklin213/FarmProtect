@@ -20,17 +20,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class FarmProtect extends JavaPlugin implements Listener{
+public class FarmProtect extends JavaPlugin implements Listener {
 	
 	public static FarmProtect plugin;
 
-	public Logger log = Logger.getLogger("Minecraft");
+	public Logger log;
 	public Updater updater;
 		
-	public void onDisable() {
-		log.info(String.format("Disabled Version %s", getDescription().getVersion()));
-	}
-	
 	public void onEnable() {
 		this.setLogger();
 		this.createConfig();
@@ -45,10 +41,10 @@ public class FarmProtect extends JavaPlugin implements Listener{
 		log.info(String.format("Version %s by jacklin213 has been Enabled!", getDescription().getVersion()));
 	}
 	
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]){
-		if (commandLabel.equalsIgnoreCase("farmprotect")){
-			if (sender.hasPermission("farmprotect.reload")){
-				if (args[0].equalsIgnoreCase("reload")){
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
+		if (commandLabel.equalsIgnoreCase("farmprotect")) {
+			if (sender.hasPermission("farmprotect.reload")) {
+				if (args[0].equalsIgnoreCase("reload")) {
 					this.reloadConfig();
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[&6FarmProtect&c]&a Has been reloaded"));
 					return true;
@@ -88,29 +84,29 @@ public class FarmProtect extends JavaPlugin implements Listener{
 
 	}
 	
-	private void setLogger(){
+	private void setLogger() {
 		log = getLogger();
 	}
 	
-	private void updateCheck(boolean updateCheck, boolean autoUpdate, int ID){
-		if(updateCheck && (autoUpdate == false)){
+	private void updateCheck(boolean updateCheck, boolean autoUpdate, int ID) {
+		if(updateCheck && (autoUpdate == false)) {
 			updater = new Updater(this, ID, this.getFile(), UpdateType.NO_DOWNLOAD, true);
 			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 			    log.info("New version available! " + updater.getLatestName());
 			}
-			if (updater.getResult() == UpdateResult.NO_UPDATE){
+			if (updater.getResult() == UpdateResult.NO_UPDATE) {
 				log.info(String.format("You are running the latest version of %s", getDescription().getName()));
 			}
 		}
-		if(autoUpdate && (updateCheck == false)){
+		if(autoUpdate && (updateCheck == false)) {
 			updater = new Updater(this, ID, this.getFile(), UpdateType.NO_VERSION_CHECK, true);
 		} 
-		if(autoUpdate && updateCheck){
+		if(autoUpdate && updateCheck) {
 			updater = new Updater(this, ID, this.getFile(), UpdateType.DEFAULT, true);
 			if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
 			    log.info("New version available! " + updater.getLatestName());
 			}
-			if (updater.getResult() == UpdateResult.NO_UPDATE){
+			if (updater.getResult() == UpdateResult.NO_UPDATE) {
 				log.info(String.format("You are running the latest version of %s", getDescription().getName()));
 			}
 		}
