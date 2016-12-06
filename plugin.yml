@@ -1,5 +1,5 @@
 name: FarmProtect
-version: 1.8.2
+version: 1.8.3
 description: Stops farmland, plots , soil turning back to dirt
 author: jacklin213
 
@@ -8,8 +8,15 @@ main: me.jacklin213.farmprotect.FarmProtect
 commands:
   farmprotect:
     description: Used for reload command
+    aliases: fp
  
 permissions:
   farmprotect.reload:
     description: Allows the usage of the reload command
+    default: op
+  farmprotect.addworld:
+    default: op
+  farmprotect.removeworld:
+    default: op
+  farmprotect.multiworld.toggle:
     default: op
