@@ -135,7 +135,7 @@ public class FarmProtect extends JavaPlugin implements Listener {
 	
 	public void sendHelp(CommandSender sender) {
 		sender.sendMessage(formatColor("&6o0=======&c[&eFarmProtect&c]&6========0o"));
-		sender.sendMessage(formatColor("&b/NOTE &f: &e" + "All farmprotect commands have an alias of /fp"));
+		sender.sendMessage(formatColor("&bNOTE &f: &e" + "All farmprotect commands have an alias of /fp"));
 		sender.sendMessage(formatColor("&b/fp toggle &f- &e" + "Turns on multiworld protection support"));
     	sender.sendMessage(formatColor("&b/fp add <world> &f- &e" + "Adds a world into protection"));
     	sender.sendMessage(formatColor("&b/fp remove <world> &f- &e" + "Removes protection for a world"));
