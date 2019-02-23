@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.jacklin213.farmprotect.utils.Metrics;
 import me.jacklin213.farmprotect.utils.Updater;
 import me.jacklin213.farmprotect.utils.Updater.UpdateResult;
 import me.jacklin213.farmprotect.utils.Updater.UpdateType;
@@ -58,6 +59,10 @@ public class FarmProtect extends JavaPlugin implements Listener {
 		
 		Boolean updateCheck = Boolean.valueOf(getConfig().getBoolean("UpdateCheck"));
 		Boolean autoUpdate = Boolean.valueOf(getConfig().getBoolean("AutoUpdate"));
+		
+		Metrics metrics = new Metrics(this);
+		metrics.addCustomChart(new Metrics.SimplePie("explosion_protect", () -> getConfig().getString("ExplosionProtect", "true")));
+		metrics.addCustomChart(new Metrics.SimplePie("multiworld", () -> getConfig().getString("MultiWorld", "false")));
 		
 		this.updateCheck(updateCheck, autoUpdate, 44691);
 		log.info(String.format("Version %s by jacklin213 has been Enabled!", getDescription().getVersion()));
