@@ -649,7 +649,31 @@ public class Updater {
      * @return true if Updater should consider the remote version an update, false if not.
      */
     public boolean shouldUpdate(final String localVersion, final String remoteVersion) {
-        return !localVersion.equalsIgnoreCase(remoteVersion);
+        if (localVersion.equalsIgnoreCase(remoteVersion))
+            return true;
+        
+        String[] local = localVersion.split("\\.");
+        String[] remote = remoteVersion.split("\\.");
+
+        Integer localMajor = Integer.parseInt(local[0]);
+        Integer remoteMajor = Integer.parseInt(remote[0]);
+        
+        Integer localMinor = Integer.parseInt(local[1]);
+        Integer remoteMinor = Integer.parseInt(remote[1]);
+        
+        Integer localBuild = Integer.parseInt(local[2]);
+        Integer remoteBuild = Integer.parseInt(remote[2]);
+        
+        // Major version
+        if (localMajor == remoteMajor) {
+            if (localMinor == remoteMinor) {
+                return localBuild < remoteBuild;
+            } else {
+                return localMinor < remoteMinor;
+            }
+        } else {
+            return localMajor < remoteMajor;
+        }
     }
 
     /**
