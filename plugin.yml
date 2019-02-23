@@ -18,5 +18,12 @@ permissions:
     default: op
   farmprotect.removeworld:
     default: op
+  farmprotect.toggle.*:
+    default: op
+    children:
+        farmprotect.multiworld.toggle: true
+        farmprotect.explosionprotect.toggle: true
   farmprotect.multiworld.toggle:
+    default: op
+  farmprotect.explosionprotect.toggle:
     default: op
